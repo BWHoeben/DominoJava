@@ -7,17 +7,17 @@ import java.util.Set;
 
 public class Board {
 
-    private int [][] values;
+    private int[][] values;
     private int width = 8;
     private int height = 7;
     private Map<Integer, Integer> bones = new HashMap<>();
 
-    public Board (int [][] values) {
+    public Board(int[][] values) {
         this.values = values;
         initializeBones();
     }
 
-    public Board (int [][] values, Map<Integer, Integer> bones) {
+    public Board(int[][] values, Map<Integer, Integer> bones) {
         this.values = values;
         this.bones = bones;
     }
@@ -34,8 +34,12 @@ public class Board {
         }
     }
 
-    public void removeBone(int index) {
+    public void removeBoneWithIndex(int index) {
         bones.remove(index);
+    }
+
+    public void removeBoneWithValue(int value) {
+        bones.values().remove(value);
     }
 
     public Set<Coordinate> getNeighbours(Coordinate coordinate) {
@@ -46,8 +50,8 @@ public class Board {
         Set<Coordinate> possibleCoors = new HashSet<>();
 
         // only evaluate the cell to the right and below, otherwise you'll be checking double
-        possibleCoors.add(new Coordinate(x + 1,y));
-        possibleCoors.add(new Coordinate(x ,y + 1));
+        possibleCoors.add(new Coordinate(x + 1, y));
+        possibleCoors.add(new Coordinate(x, y + 1));
 
         for (Coordinate coor : possibleCoors) {
             if (isValidCoor(coor)) {
@@ -61,7 +65,7 @@ public class Board {
     private boolean isValidCoor(Coordinate coordinate) {
         int x = coordinate.getX();
         int y = coordinate.getY();
-        return x >= 0 && y >=0 && x < width && y < height;
+        return x >= 0 && y >= 0 && x < width && y < height;
     }
 
     public Set<Coordinate> getCoordinatesOfValue(int val) {
@@ -70,7 +74,7 @@ public class Board {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (values[i][j] == val) {
-                    coordinates.add(new Coordinate(i,j));
+                    coordinates.add(new Coordinate(i, j));
                 }
             }
         }
@@ -94,12 +98,12 @@ public class Board {
     }
 
     public void print() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (values[i][j] < 0) {
-                    System.out.print("  " + values[i][j]);
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (values[j][i] < 0 || values[j][i] > 9 ) {
+                    System.out.print("  " + values[j][i]);
                 } else {
-                    System.out.print("   " + values[i][j]);
+                    System.out.print("   " + values[j][i]);
                 }
             }
             System.out.println();

@@ -11,6 +11,7 @@ public class Main {
 
     public static void main(String[] args) {
         Board board = new Board(new InputGenerator().getInput1());
+        board.print();
         solve(board);
     }
 
@@ -84,8 +85,8 @@ public class Main {
     }
 
     private static Set<Pair<Board, Board>> getNewBoards(Pair<Coordinate, Coordinate> coords, int value, Set<Pair<Board, Board>> boards, Board boardToFill, Board boardToSolve) {
-        boardToSolve.removeBone(value + 1);
-        System.out.println("Removing bone: " + (value + 1));
+        boardToSolve.removeBoneWithValue(value);
+        System.out.println("Removing bone: " + (value));
         Coordinate coor1 = coords.getKey();
         Coordinate coor2 = coords.getValue();
         Board boardToFillCopy = copyBoard(boardToFill);
@@ -94,6 +95,13 @@ public class Main {
         boardToSolveCopy.clearPosition(coor1, coor2);
         Pair<Board, Board> boardPair = new Pair<>(boardToSolveCopy, boardToFillCopy);
         boards.add(boardPair);
+
+        System.out.println("Board to fill:");
+        boardToFill.print();
+
+        System.out.println("Board to solve:");
+        boardToSolve.print();
+
         return boards;
     }
 
@@ -108,13 +116,15 @@ public class Main {
             leftPipValue = bone / 10;
             rightPipValue = bone % 10;
             Set<Pair<Coordinate, Coordinate>> possibleBonePositions = getPossibleBonePositions(leftPipValue, rightPipValue, board);
+            if (leftPipValue != rightPipValue) {
+                possibleBonePositions.addAll(getPossibleBonePositions(rightPipValue, leftPipValue, board));
+            }
             combinations.put(bone, possibleBonePositions);
         }
         return combinations;
     }
 
     private static Set<Pair<Coordinate, Coordinate>> getPossibleBonePositions(int leftPipValue, int rightPipValue, Board board) {
-
         Set<Pair<Coordinate, Coordinate>> possibleBonePositions = new HashSet<>();
 
         Set<Coordinate> coordinatesOfNumber = board.getCoordinatesOfValue(leftPipValue);
@@ -122,7 +132,6 @@ public class Main {
         for (Coordinate coor : coordinatesOfNumber) {
             coordinateAndHisNeighbours.put(coor, board.getNeighbours(coor));
         }
-
 
         for (Coordinate coor : coordinateAndHisNeighbours.keySet()) {
             Set<Coordinate> neighbours = coordinateAndHisNeighbours.get(coor);
