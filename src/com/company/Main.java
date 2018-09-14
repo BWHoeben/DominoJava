@@ -34,7 +34,7 @@ public class Main {
         printSolutions(solutions);
     }
 
-    private static void printSolutions (Set<Board> solutions) {
+    private static void printSolutions(Set<Board> solutions) {
         if (solutions.size() == 0) {
             System.out.println("This input could not be solved! :(");
         }
@@ -50,26 +50,34 @@ public class Main {
         Set<Pair<Board, Board>> boards = new HashSet<>();
 
         int lowestNumberOfOccurences = 1000;
+        int value = 1000;
 
         for (int bone : combinations.keySet()) {
             if (combinations.get(bone).size() == 1) {
                 Set<Pair<Coordinate, Coordinate>> set = combinations.get(bone);
                 for (Pair<Coordinate, Coordinate> pair : set) {
-                    Coordinate coor1 = pair.getKey();
-                    Coordinate coor2 = pair.getValue();
-                    boardToFill.fillPosition(coor1, coor2, bone);
-                    boardToSolve.clearPosition(coor1, coor2);
-                    Pair<Board, Board> boardPair = new Pair<>(boardToSolve, boardToFill);
-                    boards.add(boardPair);
-                    return boards;
+                    return getNewBoards(pair, bone, boards, boardToFill, boardToSolve);
                 }
             } else if (combinations.get(bone).size() < lowestNumberOfOccurences) {
                 lowestNumberOfOccurences = combinations.get(bone).size();
-                // todo
+                value = bone;
             }
         }
 
+        for (Pair<Coordinate, Coordinate> coords : combinations.get(value)) {
+            boards.addAll(getNewBoards(coords, value, boards, boardToFill, boardToSolve));
+        }
 
+        return boards;
+    }
+
+    private static Set<Pair<Board, Board>> getNewBoards(Pair<Coordinate, Coordinate> coords, int value, Set<Pair<Board, Board>> boards, Board boardToFill, Board boardToSolve) {
+        Coordinate coor1 = coords.getKey();
+        Coordinate coor2 = coords.getValue();
+        boardToFill.fillPosition(coor1, coor2, value);
+        boardToSolve.clearPosition(coor1, coor2);
+        Pair<Board, Board> boardPair = new Pair<>(boardToSolve, boardToFill);
+        boards.add(boardPair);
         return boards;
     }
 
@@ -80,7 +88,7 @@ public class Main {
         int leftPipValue;
         int rightPipValue;
         for (int i = 0; i < bones.size(); i++) {
-            int bone = bones.get(i);
+            int bone = bones.get(i + 1);
             leftPipValue = bone / 10;
             rightPipValue = bone % 10;
             Set<Pair<Coordinate, Coordinate>> possibleBonePositions = getPossibleBonePositions(leftPipValue, rightPipValue, board);

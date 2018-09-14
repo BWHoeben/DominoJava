@@ -37,7 +37,7 @@ public class Board {
     private boolean isValidCoor(Coordinate coordinate) {
         int x = coordinate.getX();
         int y = coordinate.getY();
-        return x >= 0 && y >=0 && x <= width && y <= height;
+        return x >= 0 && y >=0 && x < width && y < height;
     }
 
     public Set<Coordinate> getCoordinatesOfValue(int val) {
