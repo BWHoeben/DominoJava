@@ -1,0 +1,8 @@
+
+_squid:S1854("<Remove this useless assignment to local variable "rightPip".(¢ˆó‘ıÿÿÿÿ8Ø§¾™İ,
+Psquid:S1481("-Remove this unused "rightPip" local variable.(¢ˆó‘ıÿÿÿÿ8Ø§¾™İ,
+Osquid:S1172%",Remove this unused method parameter "board".(‚š¿Áøÿÿÿÿ8ş”ê˜İ,
+]squid:UselessImportCheck"-Remove this unused import 'javafx.util.Pair'.(û­ûºüÿÿÿÿ8ãÒ‹™İ,
+Usquid:S1172"2Remove this unused method parameter "boardToFill".(éÂÏ´ıÿÿÿÿ8²›™—İ,
+Jsquid:S1481'",Remove this unused "leftPip" local variable.(Õ‘ı8×¹»™İ,
+Ysquid:S1854'";Remove this useless assignment to local variable "leftPip".(Õ‘ı8×¹»™İ,
