@@ -35,10 +35,6 @@ public class Board {
         }
     }
 
-    public void removeBoneWithIndex(int index) {
-        bones.remove(index);
-    }
-
     public void removeBoneWithValue(int value) {
         bones.values().remove(value);
     }
@@ -103,7 +99,7 @@ public class Board {
             for (int j = 0; j < 8; j++) {
                 if (values[j][i] < 0) {
                     System.out.print("   X");
-                } else if (values[j][i] > 9 ) {
+                } else if (values[j][i] > 9) {
                     System.out.print("  " + values[j][i]);
                 } else {
                     System.out.print("   " + values[j][i]);
