@@ -31,9 +31,10 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
 --getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
 --getCombinations board = 
 
-getBones :: [(Int, Bone)]
-getBones = [(1, (0, 0)),
-            (2, (0, 1))]
+getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)]
+getBones [] n = getBones [(1, (0, 0))] 1 
+getBones bones n = if n < 28 then getBones (bones ++ [nextBone (last bones)]) (n + 1) else bones
+
 
 nextBone :: (Int, Bone) -> (Int, Bone)
 nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
