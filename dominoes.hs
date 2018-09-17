@@ -1,6 +1,6 @@
 import System.IO
 
-type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int])
+type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
 type Bone = (Int, Int) -- (leftPip, rightPip)
 
@@ -21,7 +21,8 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [5, 3, 6, 2, 3, 2, 0, 6],
              [4, 0, 4, 1, 0, 0, 4, 1],
              [5, 2, 2, 4, 4, 1, 6, 5],
-             [5, 5, 3, 6, 1, 2, 3, 1])
+             [5, 5, 3, 6, 1, 2, 3, 1],
+             getBones [] 0)
 
 --solve :: Board -> [Board]
 
@@ -30,6 +31,12 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
 
 --getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
 --getCombinations board = 
+
+findBoneInList :: Bone -> [Int] -> Int -> [(Int, Int)]
+findBoneInList (a, b) xs index = if (index + 1) > length xs then [] else (if (xs !! index, xs !! (index + 1)) == (a,b) || (xs !! index, xs !! (index + 1)) == (b, a) then [(index, index + 1)] else []) ++ findBoneInList (a,b) xs (index + 1)
+
+pairConsecutiveElementsInList :: [a] -> [(a,a)]
+pairConsecutiveElementsInList xs = zip xs $ tail xs
 
 getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)]
 getBones [] n = getBones [(1, (0, 0))] 1 
@@ -40,7 +47,7 @@ nextBone :: (Int, Bone) -> (Int, Bone)
 nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
 
 getEmptyBoard :: Board
-getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1))
+getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
 
 replicateInt :: Int -> Int -> [Int]
 replicateInt n x = [x | n' <- [1..n]]
@@ -52,10 +59,10 @@ printList xs = e ++ " " ++ printList (tail xs)
 
 
 printBoard :: Board -> IO ()
-printBoard (a, b, c , d, e, f, g) = putStr(printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n")
+printBoard (a, b, c , d, e, f, g, xs) = putStr(printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n")
 
 boardIsEmpty :: Board -> Bool
-boardIsEmpty (a, b, c , d, e, f, g) = rowIsEmpty a && rowIsEmpty b && rowIsEmpty c && rowIsEmpty d && rowIsEmpty e && rowIsEmpty f && rowIsEmpty g
+boardIsEmpty (a, b, c , d, e, f, g, xs) = rowIsEmpty a && rowIsEmpty b && rowIsEmpty c && rowIsEmpty d && rowIsEmpty e && rowIsEmpty f && rowIsEmpty g
 
 -- For empty cells a value of -1 is used
 rowIsEmpty :: [Int] -> Bool
@@ -63,7 +70,7 @@ rowIsEmpty [] = True
 rowIsEmpty xs = if (head xs >= 0) then False else rowIsEmpty (tail xs)
 
 getRow :: Board -> Int -> [Int]
-getRow (a, b, c , d, e, f, g) row
+getRow (a, b, c , d, e, f, g, xs) row
    | row == 0 = a
    | row == 1 = b
    | row == 2 = c
@@ -72,19 +79,28 @@ getRow (a, b, c , d, e, f, g) row
    | row == 5 = f
    | row == 6 = g
    | otherwise = error "Wrong input for getRow function"
+
+getColumn :: Board -> Int -> [Int]
+getColumn board n = [getRow board 0 !! n] ++
+                    [getRow board 1 !! n] ++
+                    [getRow board 2 !! n] ++
+                    [getRow board 3 !! n] ++
+                    [getRow board 4 !! n] ++
+                    [getRow board 5 !! n] ++
+                    [getRow board 6 !! n]
    
 emptyCellInBoard :: Board -> Int -> Int -> Board
 emptyCellInBoard board row col = replaceRowInBoard board row (emptyCellInRow (getRow board row) col)
 
 replaceRowInBoard :: Board -> Int -> [Int] -> Board
-replaceRowInBoard (a,b,c,d,e,f,g) rowNumber newRow
-   | rowNumber == 0 = (newRow, b, c, d, e, f, g)
-   | rowNumber == 1 = (a, newRow, c, d, e, f, g)
-   | rowNumber == 2 = (a, b, newRow, d, e, f, g)
-   | rowNumber == 3 = (a, b, c, newRow, e, f, g)
-   | rowNumber == 4 = (a, b, c, d, newRow, f, g)
-   | rowNumber == 5 = (a, b, c, d, e, newRow, g)
-   | rowNumber == 6 = (a, b, c, d, e, f, newRow)
+replaceRowInBoard (a,b,c,d,e,f,g,xs) rowNumber newRow
+   | rowNumber == 0 = (newRow, b, c, d, e, f, g, xs)
+   | rowNumber == 1 = (a, newRow, c, d, e, f, g, xs)
+   | rowNumber == 2 = (a, b, newRow, d, e, f, g, xs)
+   | rowNumber == 3 = (a, b, c, newRow, e, f, g, xs)
+   | rowNumber == 4 = (a, b, c, d, newRow, f, g, xs)
+   | rowNumber == 5 = (a, b, c, d, e, newRow, g, xs)
+   | rowNumber == 6 = (a, b, c, d, e, f, newRow, xs)
    | otherwise = error "Wrong input for replaceRowInBoard function"
 
 emptyCellInRow :: [Int] -> Int -> [Int]
