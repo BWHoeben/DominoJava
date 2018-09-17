@@ -10,7 +10,7 @@ public class Board {
     private int[][] values;
     private int width = 8;
     private int height = 7;
-    private Map<Integer, Integer> bones = new HashMap<>();
+    private Map<Integer, Integer> bones;
 
     public Board(int[][] values) {
         this.values = values;
@@ -23,6 +23,7 @@ public class Board {
     }
 
     private void initializeBones() {
+        bones = new HashMap<>();
         int index = 0;
         int j = 0;
         for (int i = 0; i < 7; i++) {
@@ -100,7 +101,9 @@ public class Board {
     public void print() {
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 8; j++) {
-                if (values[j][i] < 0 || values[j][i] > 9 ) {
+                if (values[j][i] < 0) {
+                    System.out.print("   X");
+                } else if (values[j][i] > 9 ) {
                     System.out.print("  " + values[j][i]);
                 } else {
                     System.out.print("   " + values[j][i]);

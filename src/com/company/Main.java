@@ -24,7 +24,7 @@ public class Main {
         Set<Pair<Board, Board>> boardsToSolve = updateBoard(boardToSolve, emptyBoard);
         Set<Pair<Board, Board>> boardsToAdd = new HashSet<>();
         Set<Pair<Board, Board>> boardsToRemove = new HashSet<>();
-        while (boardsToSolve.size() > 0) {
+        while (!boardsToSolve.isEmpty()) {
             for (Pair<Board, Board> boardPair : boardsToSolve) {
                 if (boardPair.getKey().isEmpty()) {
                     solutions.add(boardPair.getKey());
@@ -33,10 +33,16 @@ public class Main {
                 boardsToRemove.add(boardPair);
             }
             boardsToSolve.removeAll(boardsToRemove);
-            boardsToSolve.addAll(boardsToAdd);
+            for (Pair<Board, Board> pair : boardsToAdd) {
+                if (pair.getKey().isEmpty()) {
+                    solutions.add(pair.getValue());
+                } else {
+                    boardsToSolve.add(pair);
+                }
+            }
             boardsToRemove.clear();
             boardsToAdd.clear();
-            System.out.println(boardsToSolve.size());
+            System.out.println("Boards to solve: " + boardsToSolve.size());
         }
         printSolutions(solutions);
     }
@@ -74,6 +80,8 @@ public class Main {
         }
 
         for (Pair<Coordinate, Coordinate> coords : combinations.get(value)) {
+            System.out.println("***************");
+            boardToSolve.print();
             boards.addAll(getNewBoards(coords, value, boards, boardToFill, boardToSolve));
         }
 
@@ -81,14 +89,33 @@ public class Main {
     }
 
     private static Board copyBoard(Board board) {
-        return new Board(board.getValues(), board.getBones());
+        int[][] values = cloneValues(board.getValues());
+        Map<Integer, Integer> bones = cloneBones(board.getBones());
+        return new Board(values, bones);
+    }
+
+    private static int[][] cloneValues(int[][] original) {
+        int[][] clone = new int[8][7];
+        for (int i = 0; i < original.length; i++) {
+            {
+                for (int j = 0; j < original[i].length; j++)
+                    clone[i][j] = original[i][j];
+            }
+        }
+        return clone;
+    }
+
+    private static Map<Integer, Integer> cloneBones(Map<Integer, Integer> original) {
+        return new HashMap<>(original);
     }
 
     private static Set<Pair<Board, Board>> getNewBoards(Pair<Coordinate, Coordinate> coords, int value, Set<Pair<Board, Board>> boards, Board boardToFill, Board boardToSolve) {
         boardToSolve.removeBoneWithValue(value);
         System.out.println("Removing bone: " + (value));
+
         Coordinate coor1 = coords.getKey();
         Coordinate coor2 = coords.getValue();
+
         Board boardToFillCopy = copyBoard(boardToFill);
         boardToFillCopy.fillPosition(coor1, coor2, value);
         Board boardToSolveCopy = copyBoard(boardToSolve);
@@ -97,10 +124,10 @@ public class Main {
         boards.add(boardPair);
 
         System.out.println("Board to fill:");
-        boardToFill.print();
+        boardToFillCopy.print();
 
         System.out.println("Board to solve:");
-        boardToSolve.print();
+        boardToSolveCopy.print();
 
         return boards;
     }

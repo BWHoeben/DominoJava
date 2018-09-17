@@ -1,8 +1,24 @@
 
-_squid:S1854("<Remove this useless assignment to local variable "rightPip".(¢ˆó‘ýÿÿÿÿ8Ø§¾™Ý,
-Psquid:S1481("-Remove this unused "rightPip" local variable.(¢ˆó‘ýÿÿÿÿ8Ø§¾™Ý,
-Osquid:S1172%",Remove this unused method parameter "board".(‚š¿Áøÿÿÿÿ8þ”ê˜Ý,
-]squid:UselessImportCheck"-Remove this unused import 'javafx.util.Pair'.(û­ûºüÿÿÿÿ8ãÒ‹™Ý,
-Usquid:S1172"2Remove this unused method parameter "boardToFill".(éÂÏ´ýÿÿÿÿ8²›™—Ý,
-Jsquid:S1481'",Remove this unused "leftPip" local variable.(Õ‘ýž8×¹»™Ý,
-Ysquid:S1854'";Remove this useless assignment to local variable "leftPip".(Õ‘ýž8×¹»™Ý,
+[
+squid:S1062"9Replace this use of System.out or System.err by a logger.(þÏÌÇüÿÿÿÿ8­‘¹ºÝ,
+V
+squid:S106j"9Replace this use of System.out or System.err by a logger.(è…ù×8»ã³ÂÝ,
+asquid:S1155">Use isEmpty() to check whether the collection is empty or not.(¦ìÎ”øÿÿÿÿ8¤»š¾Ý,
+Wsquid:S2864v"4Iterate over the "entrySet" instead of the "keySet".(Œºî­úÿÿÿÿ8º€ú¿Ý,
+Xsquid:S2864Œ"4Iterate over the "entrySet" instead of the "keySet".(´â±úÿÿÿÿ8Àì‡ÁÝ,
+Xsquid:S2209"5Change this instance-reference to a static reference.(ˆÿ×¼üÿÿÿÿ8ù—Ÿ»Ý,
+Qsquid:S2440".Remove this instantiation of "InputGenerator".(ˆÿ×¼üÿÿÿÿ8ù—Ÿ»Ý,
+V
+squid:S106."9Replace this use of System.out or System.err by a logger.(÷¯»ÿ8ÃéµºÝ,
+squid:S2234|"jParameters to getPossibleBonePositions have the same names but not the same order as the method arguments.(…¥¹ºùÿÿÿÿ8û‘ÇÂÝ,
+Ysquid:S1751D"6Remove this "return" statement or make it conditional.(Çúžåûÿÿÿÿ8ð¸“ºÝ,
+Rsquid:S2864>"4Iterate over the "entrySet" instead of the "keySet".(‰þÑÛ8Þà³¹Ý,
+V
+squid:S106M"9Replace this use of System.out or System.err by a logger.(ˆèÑÑ8ê®ÃÝ,
+\squid:S1155-">Use isEmpty() to check whether the collection is empty or not.(©›‚ú8ÃéµºÝ,
+[
+squid:S106'"9Replace this use of System.out or System.err by a logger.(Ÿ‹ôÞúÿÿÿÿ8²í‘¿Ý,
+V
+squid:S106g"9Replace this use of System.out or System.err by a logger.(ú¡¼†8•è²ÂÝ,
+[
+squid:S106["9Replace this use of System.out or System.err by a logger.(æï­¦úÿÿÿÿ8é¹½ÃÝ,
