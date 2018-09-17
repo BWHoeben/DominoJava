@@ -32,6 +32,39 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
 --getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
 --getCombinations board = 
 
+calculateBoneOccurrence :: Board -> [(Bone, Int)]
+calculateBoneOccurrence (a, b, c , d, e, f, g, xs) = 
+
+
+
+findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)]
+findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board ++ findBoneOnBoardVertical bone board
+
+findBoneOnBoardHorizontal :: Bone -> Board -> [(Coordinate, Coordinate)]
+findBoneOnBoardHorizontal bone board = convertRowIndicesToCoordinates (findBoneInList bone (getRow board 0) 0) 0 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 1) 0) 1 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 2) 0) 2 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 3) 0) 3 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 4) 0) 4 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 5) 0) 5 ++
+                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 6) 0) 6
+
+findBoneOnBoardVertical :: Bone -> Board -> [(Coordinate, Coordinate)]
+findBoneOnBoardVertical bone board = convertColIndicesToCoordinates (findBoneInList bone (getColumn board 0) 0) 0 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 1) 0) 1 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 2) 0) 2 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 3) 0) 3 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 4) 0) 4 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 5) 0) 5 ++
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 6) 0) 6
+
+
+convertRowIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
+convertRowIndicesToCoordinates [(r1, r2)] c = [((r1, c),(r2, c))]
+
+convertColIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
+convertColIndicesToCoordinates [(c1, c2)] r = [((r, c1),(r, c2))]
+
 findBoneInList :: Bone -> [Int] -> Int -> [(Int, Int)]
 findBoneInList (a, b) xs index = if (index + 1) > length xs then [] else (if (xs !! index, xs !! (index + 1)) == (a,b) || (xs !! index, xs !! (index + 1)) == (b, a) then [(index, index + 1)] else []) ++ findBoneInList (a,b) xs (index + 1)
 
