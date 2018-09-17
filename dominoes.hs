@@ -32,3 +32,39 @@ printList xs = e ++ " " ++ printList (tail xs)
 
 printBoard :: Board -> IO ()
 printBoard (a, b, c , d, e, f, g) = putStr(printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n")
+
+boardIsEmpty :: Board -> Bool
+boardIsEmpty (a, b, c , d, e, f, g) = rowIsEmpty a && rowIsEmpty b && rowIsEmpty c && rowIsEmpty d && rowIsEmpty e && rowIsEmpty f && rowIsEmpty g
+
+-- For empty cells a value of -1 is used
+rowIsEmpty :: [Int] -> Bool
+rowIsEmpty [] = True
+rowIsEmpty xs = if (head xs >= 0) then False else rowIsEmpty (tail xs)
+
+getRow :: Board -> Int -> [Int]
+getRow (a, b, c , d, e, f, g) row
+   | row == 0 = a
+   | row == 1 = b
+   | row == 2 = c
+   | row == 3 = d
+   | row == 4 = e
+   | row == 5 = f
+   | row == 6 = g
+   | otherwise = error "Wrong input for getRow function"
+   
+emptyCellInBoard :: Board -> Int -> Int -> Board
+emptyCellInBoard board row col = replaceRowInBoard board row (emptyCellInRow (getRow board row) col)
+
+replaceRowInBoard :: Board -> Int -> [Int] -> Board
+replaceRowInBoard (a,b,c,d,e,f,g) rowNumber newRow
+   | rowNumber == 0 = (newRow, b, c, d, e, f, g)
+   | rowNumber == 1 = (a, newRow, c, d, e, f, g)
+   | rowNumber == 2 = (a, b, newRow, d, e, f, g)
+   | rowNumber == 3 = (a, b, c, newRow, e, f, g)
+   | rowNumber == 4 = (a, b, c, d, newRow, f, g)
+   | rowNumber == 5 = (a, b, c, d, e, newRow, g)
+   | rowNumber == 6 = (a, b, c, d, e, f, newRow)
+   | otherwise = error "Wrong input for replaceRowInBoard function"
+
+emptyCellInRow :: [Int] -> Int -> [Int]
+emptyCellInRow col index = take index col ++ [-1] ++ drop (index + 1) col
