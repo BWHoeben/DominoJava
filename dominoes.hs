@@ -1,9 +1,8 @@
 import System.IO
 
 type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int])
-
-helloWorld :: String
-helloWorld = "Hello World"
+type Coordinate = (Int, Int) -- (x, y)
+type Bone = (Int, Int) -- (leftPip, rightPip)
 
 getInput :: ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [Int])
 getInput = ([5, 0, 3, 5, 4, 5, 5],
@@ -23,6 +22,27 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [4, 0, 4, 1, 0, 0, 4, 1],
              [5, 2, 2, 4, 4, 1, 6, 5],
              [5, 5, 3, 6, 1, 2, 3, 1])
+
+--solve :: Board -> [Board]
+
+--updateBoard :: Board -> Board -> (Board, Board) -- (boardToSolve, boardToFill)
+--updateBoard boardToSolve boardToFill = 
+
+--getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
+--getCombinations board = 
+
+getBones :: [(Int, Bone)]
+getBones = [(1, (0, 0)),
+            (2, (0, 1))]
+
+nextBone :: (Int, Bone) -> (Int, Bone)
+nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
+
+getEmptyBoard :: Board
+getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1))
+
+replicateInt :: Int -> Int -> [Int]
+replicateInt n x = [x | n' <- [1..n]]
 
 printList :: [Int] -> String
 printList [] = ""
@@ -67,4 +87,8 @@ replaceRowInBoard (a,b,c,d,e,f,g) rowNumber newRow
    | otherwise = error "Wrong input for replaceRowInBoard function"
 
 emptyCellInRow :: [Int] -> Int -> [Int]
-emptyCellInRow col index = take index col ++ [-1] ++ drop (index + 1) col
+emptyCellInRow col index = updateCellInRow col (-1) index
+
+updateCellInRow :: [Int] -> Int -> Int -> [Int]
+updateCellInRow col value index = take index col ++ [value] ++ drop (index + 1) col
+
