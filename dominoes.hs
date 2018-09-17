@@ -1,4 +1,5 @@
 import System.IO
+import Data.Tuple
 
 type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
@@ -32,9 +33,8 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
 --getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
 --getCombinations board = 
 
-calculateBoneOccurrence :: Board -> [(Bone, Int)]
-calculateBoneOccurrence (a, b, c , d, e, f, g, xs) = 
-
+calculateBoneOccurrence :: Board -> Bone -> Int
+calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
 
 
 findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)]
@@ -56,17 +56,21 @@ findBoneOnBoardVertical bone board = convertColIndicesToCoordinates (findBoneInL
                                      convertColIndicesToCoordinates (findBoneInList bone (getColumn board 3) 0) 3 ++
                                      convertColIndicesToCoordinates (findBoneInList bone (getColumn board 4) 0) 4 ++
                                      convertColIndicesToCoordinates (findBoneInList bone (getColumn board 5) 0) 5 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 6) 0) 6
-
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 6) 0) 6 ++ 
+                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 7) 0) 7
 
 convertRowIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
-convertRowIndicesToCoordinates [(r1, r2)] c = [((r1, c),(r2, c))]
+convertRowIndicesToCoordinates [] c = []
+convertRowIndicesToCoordinates xs c = [((fst (head xs), c),(snd (head xs), c))] ++ convertRowIndicesToCoordinates (tail xs) c
+
 
 convertColIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
-convertColIndicesToCoordinates [(c1, c2)] r = [((r, c1),(r, c2))]
+convertColIndicesToCoordinates [] c = []
+convertColIndicesToCoordinates xs r = [((r, fst (head xs)),(r, snd (head xs)))] ++ convertColIndicesToCoordinates (tail xs) r
 
 findBoneInList :: Bone -> [Int] -> Int -> [(Int, Int)]
-findBoneInList (a, b) xs index = if (index + 1) > length xs then [] else (if (xs !! index, xs !! (index + 1)) == (a,b) || (xs !! index, xs !! (index + 1)) == (b, a) then [(index, index + 1)] else []) ++ findBoneInList (a,b) xs (index + 1)
+findBoneInList bone xs index = if index < (length xs - 1) then ((if (valuesInList == bone || valuesInList == swap bone) then [(index, index + 1)] else []) ++ findBoneInList bone xs (index + 1)) else [] 
+                                                                     where valuesInList = (xs !! index, xs !! (index + 1))
 
 pairConsecutiveElementsInList :: [a] -> [(a,a)]
 pairConsecutiveElementsInList xs = zip xs $ tail xs
