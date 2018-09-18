@@ -27,11 +27,32 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
 
 --solve :: Board -> [Board]
 
---updateBoard :: Board -> Board -> (Board, Board) -- (boardToSolve, boardToFill)
---updateBoard boardToSolve boardToFill = 
 
---getCombinations :: Board -> (Int, [(Coordinate, Coordinate)])
---getCombinations board = 
+--updateBoard :: Board -> Board -> [(Board, Board)] -- (boardToSolve, boardToFill)
+--updateBoard boardToSolve boardToFill = fst (getBoneWithLowestOccurence boardToSolve)
+--      | fst (getBoneWithLowestOccurence boardToSolve) == 0 = []
+--      | fst (getBoneWithLowestOccurence boardToSolve) == 1 = [solveForOne]
+--      | otherwise                                          = solveForMultiple
+
+solveForOne :: Board -> Board -> (Coordinate, Coordinate) -> Int -> (Board, Board) -- Input: boardToSolve, boardToFill, coordinates and boneNumber
+solveForOne boardToSolve boardToFill coors boneNumber = (emptyCellInBoardUsingCoordinates boardToSolve coors, updateCellInBoardUsingCoordinates boardToFill boneNumber coors)
+
+
+emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
+emptyCellInBoardUsingCoordinates board coors = emptyCellInBoard (emptyCellInBoard board (fst (fst (coors))) (snd (fst coors))) (fst (snd coors)) (snd (snd coors))
+
+--solveForMultiple :: Board -> Board -> [(Board, Board)]
+--solveForMultiple boardToSolve boardToFill = [(0,0)]
+
+--getBoneWithLowestOccurence :: Board -> (Int, (Int, Bone))
+--getBoneWithLowestOccurence board = calculateBoneOccurrences board 
+
+--minimumWithIndex :: [Int] -> (Int, Int)
+--minimumWithIndex xs = 
+
+calculateBoneOccurrences :: Board -> [(Int, (Int, Bone))] -- [(frequency, (boneNumber, Bone))]
+calculateBoneOccurrences (a, b, c, d, e, f, g, []) = []
+calculateBoneOccurrences (a, b, c, d, e, f, g, xs) = [(calculateBoneOccurrence (a, b, c, d, e, f, g, xs) (snd (head xs)) , (head xs))] ++ calculateBoneOccurrences (a, b, c, d, e, f, g, tail xs)
 
 calculateBoneOccurrence :: Board -> Bone -> Int
 calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
@@ -145,4 +166,11 @@ emptyCellInRow col index = updateCellInRow col (-1) index
 
 updateCellInRow :: [Int] -> Int -> Int -> [Int]
 updateCellInRow col value index = take index col ++ [value] ++ drop (index + 1) col
+
+updateCellInBoard :: Board -> Int -> Int -> Int -> Board
+updateCellInBoard board value row col = replaceRowInBoard board row (updateCellInRow (getRow board row) value col)
+
+updateCellInBoardUsingCoordinates :: Board -> Int -> (Coordinate, Coordinate) -> Board
+updateCellInBoardUsingCoordinates board value coors = updateCellInBoard newBoard value (snd (snd coors)) (fst (snd coors))
+                                                         where newBoard = updateCellInBoard board value (snd (fst coors)) (fst (fst coors))
 

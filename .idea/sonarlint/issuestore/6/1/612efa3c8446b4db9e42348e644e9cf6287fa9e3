@@ -1,5 +1,0 @@
-
-‡squid:S4165
-"dRemove this useless assignment; "number" already holds the assigned value along all execution paths.(Ì¾÷œúÿÿÿÿ8ˆœ‹·Ý,
-‚squid:S4165"eRemove this useless assignment; "leftPip" already holds the assigned value along all execution paths.(Ûöœ&8õö‡·Ý,
-„squid:S4165"fRemove this useless assignment; "rightPip" already holds the assigned value along all execution paths.(ÑÅÍû8à‘ˆ·Ý,
