@@ -65,10 +65,6 @@ solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)]
 solve _ _ [] _ = []
 solve boardToSolve boardToFill coors boneNumber = [(emptyCellInBoardUsingCoordinates boardToSolve (head coors), updateCellInBoardUsingCoordinates boardToFill boneNumber (head coors))] ++ solve boardToSolve boardToFill (tail coors) boneNumber
 
-
-emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
-emptyCellInBoardUsingCoordinates board coors = emptyCellInBoard (emptyCellInBoard board (fst (fst (coors))) (snd (fst coors))) (fst (snd coors)) (snd (snd coors))
-
 getBoneWithLowestOccurrence :: Board -> (Int, (Int, Bone)) -- (frequency, (boneNumber, Bone))
 getBoneWithLowestOccurrence board = (!!) boneOccurrences (fst (minimumWithIndex (occurrencesToList (boneOccurrences))))
                                           where boneOccurrences = calculateBoneOccurrences board
@@ -206,4 +202,7 @@ updateCellInBoard board value row col = replaceRowInBoard board row (updateCellI
 updateCellInBoardUsingCoordinates :: Board -> Int -> (Coordinate, Coordinate) -> Board -- works
 updateCellInBoardUsingCoordinates board value coors = updateCellInBoard newBoard value (snd (snd coors)) (fst (snd coors))
                                                          where newBoard = updateCellInBoard board value (snd (fst coors)) (fst (fst coors))
+
+emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
+emptyCellInBoardUsingCoordinates board coors = updateCellInBoardUsingCoordinates board (-1) coors
 
