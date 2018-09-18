@@ -27,9 +27,31 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [5, 5, 3, 6, 1, 2, 3, 1],
              getBones [] 0)
 
---main :: Board -> [Board]
---main board 
+mainF :: Board -> ()
+mainF board = getSolution [(board, getEmptyBoard)]
 
+getSolution :: [(Board, Board)] -> ()
+getSolution boards = if (length updatedBoards > 0) then getSolution updatedBoards else ()
+                     where updatedBoards = updateBoardList boards
+
+updateBoardList :: [(Board, Board)] -> [(Board, Board)]
+updateBoardList [] = []
+updateBoardList boards = updateBoard (fst (head updatedBoards)) (snd (head updatedBoards)) ++ updateBoardList (tail updatedBoards)
+                         where updatedBoards = removeBoards boards
+
+removeBoards :: [(Board, Board)] -> [(Board, Board)]
+removeBoards [] = []
+removeBoards boards = if isSolved (head boards) then handleRemovedBoards (head boards) else boards ++ removeBoards boards 
+
+handleRemovedBoards :: (Board, Board) -> [(Board, Board)]
+handleRemovedBoards boards = do if isSolved boards then printBoard (snd boards) else []
+                                []
+
+isSolved :: (Board, Board) -> Bool
+isSolved boards = if boardIsEmpty (fst boards) then True else False
+
+printSolution :: (Board, Board) -> IO ()
+printSolution boards = putStr("Solution found: \n" ++ printBoard (snd boards))
 
 updateBoard :: Board -> Board -> [(Board, Board)] -- (boardToSolve, boardToFill)
 updateBoard boardToSolve boardToFill = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
@@ -124,8 +146,8 @@ printList xs = e ++ " " ++ printList (tail xs)
                where e = if (head xs) < 0 then "X" else show (head xs)
 
 
-printBoard :: Board -> IO ()
-printBoard (a, b, c , d, e, f, g, xs) = putStr(printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n")
+printBoard :: Board -> String
+printBoard (a, b, c , d, e, f, g, xs) = printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n"
 
 boardIsEmpty :: Board -> Bool
 boardIsEmpty (a, b, c , d, e, f, g, xs) = rowIsEmpty a && rowIsEmpty b && rowIsEmpty c && rowIsEmpty d && rowIsEmpty e && rowIsEmpty f && rowIsEmpty g
