@@ -1,5 +1,7 @@
 import System.IO
 import Data.Tuple
+import Data.List
+import Data.Maybe
 
 type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
@@ -25,30 +27,36 @@ getInput2 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [5, 5, 3, 6, 1, 2, 3, 1],
              getBones [] 0)
 
---solve :: Board -> [Board]
+--main :: Board -> [Board]
+--main board 
 
 
---updateBoard :: Board -> Board -> [(Board, Board)] -- (boardToSolve, boardToFill)
---updateBoard boardToSolve boardToFill = fst (getBoneWithLowestOccurence boardToSolve)
---      | fst (getBoneWithLowestOccurence boardToSolve) == 0 = []
---      | fst (getBoneWithLowestOccurence boardToSolve) == 1 = [solveForOne]
---      | otherwise                                          = solveForMultiple
+updateBoard :: Board -> Board -> [(Board, Board)] -- (boardToSolve, boardToFill)
+updateBoard boardToSolve boardToFill = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
+                                       where boneWithLowestOccurence = getBoneWithLowestOccurence boardToSolve
+                                             occurrences = fst boneWithLowestOccurence
+                                             bone = snd (snd boneWithLowestOccurence)
+                                             boneNumber = fst (snd boneWithLowestOccurence)
+                                             coors = findBoneOnBoard bone boardToSolve
 
-solveForOne :: Board -> Board -> (Coordinate, Coordinate) -> Int -> (Board, Board) -- Input: boardToSolve, boardToFill, coordinates and boneNumber
-solveForOne boardToSolve boardToFill coors boneNumber = (emptyCellInBoardUsingCoordinates boardToSolve coors, updateCellInBoardUsingCoordinates boardToFill boneNumber coors)
+solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)] -- Input: boardToSolve, boardToFill, coordinates and boneNumber
+solve _ _ [] _ = []
+solve boardToSolve boardToFill coors boneNumber = [(emptyCellInBoardUsingCoordinates boardToSolve (head coors), updateCellInBoardUsingCoordinates boardToFill boneNumber (head coors))] ++ solve boardToSolve boardToFill (tail coors) boneNumber
 
 
 emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
 emptyCellInBoardUsingCoordinates board coors = emptyCellInBoard (emptyCellInBoard board (fst (fst (coors))) (snd (fst coors))) (fst (snd coors)) (snd (snd coors))
 
---solveForMultiple :: Board -> Board -> [(Board, Board)]
---solveForMultiple boardToSolve boardToFill = [(0,0)]
+getBoneWithLowestOccurence :: Board -> (Int, (Int, Bone)) -- (frequency, (boneNumber, Bone))
+getBoneWithLowestOccurence board = (!!) boneOccurrences (fst (minimumWithIndex (occurrencesToList (boneOccurrences))))
+                                          where boneOccurrences = calculateBoneOccurrences board
 
---getBoneWithLowestOccurence :: Board -> (Int, (Int, Bone))
---getBoneWithLowestOccurence board = calculateBoneOccurrences board 
+minimumWithIndex :: [Int] -> (Int, Int) -- (index, value)
+minimumWithIndex xs = (fromJust (elemIndex min xs), min)
+                       where min = minimum xs 
 
---minimumWithIndex :: [Int] -> (Int, Int)
---minimumWithIndex xs = 
+occurrencesToList :: [(Int, (Int, Bone))] -> [Int]
+occurrencesToList xs = [fst (head xs)] ++ occurrencesToList (tail xs)  
 
 calculateBoneOccurrences :: Board -> [(Int, (Int, Bone))] -- [(frequency, (boneNumber, Bone))]
 calculateBoneOccurrences (a, b, c, d, e, f, g, []) = []
