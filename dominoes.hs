@@ -40,6 +40,15 @@ getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
 getEmptyBoard :: Board -- Works
 getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
 
+main :: IO ()
+main = do putStrLn "Select an input (1, 2 or 3):"
+          answer <- getLine
+          case answer of
+           "1" -> start getInput1
+           "2" -> start getInput2
+           "3" -> start getInput3
+           _ -> putStrLn "Invalid input. Terminating..."
+
 start :: Board -> IO ()
 start board = do putStr("Input: \n")
                  printBoard board
