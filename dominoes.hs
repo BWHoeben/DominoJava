@@ -40,11 +40,11 @@ getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
 getEmptyBoard :: Board -- Works
 getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
 
-start :: IO ()
-start = do putStr("Input: \n")
-           printBoard getInput3
-           putStr("\nResult(s): \n")
-           printSolutions (iterateBoards[(getInput3, getEmptyBoard)] [] [])
+start :: Board -> IO ()
+start board = do putStr("Input: \n")
+                 printBoard board
+                 putStr("\nResult(s): \n")
+                 printSolutions (iterateBoards[(board, getEmptyBoard)] [] [])
 
 iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
 iterateBoards [] [] [] = []
