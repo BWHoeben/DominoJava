@@ -5,14 +5,42 @@ import javafx.util.Pair;
 import objects.Board;
 import objects.Coordinate;
 
+import java.util.Scanner;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        Board board = new Board(new InputGenerator().getInput1());
+        System.out.println("Available inputs: ");
+        System.out.println("Option 1: ");
+        new Board(InputGenerator.getInput1()).print();
+        System.out.println("Option 2: ");
+        new Board(InputGenerator.getInput2()).print();
+        System.out.println("Option 2: ");
+        new Board(InputGenerator.getInput3()).print();
+        Board board = new Board(askForInput());
+        System.out.println("Input: ");
         board.print();
+        System.out.println();
         solve(board);
+    }
+
+    private static int[][] askForInput() {
+        Scanner reader = new Scanner(System.in);
+        int n = 0;
+        while (n < 1 || n > 3) {
+            System.out.println("Choose an input (1, 2 or 3): ");
+            try {
+                n = Integer.parseInt(reader.nextLine());
+                if (n < 1 || n > 3) {
+                    System.out.println("Invalid input.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+            }
+        }
+        reader.close();
+        return InputGenerator.getInput(n);
     }
 
     private static void solve(Board boardToSolve) {
@@ -42,7 +70,6 @@ public class Main {
             }
             boardsToRemove.clear();
             boardsToAdd.clear();
-            System.out.println("Boards to solve: " + boardsToSolve.size());
         }
         printSolutions(solutions);
     }
@@ -50,11 +77,12 @@ public class Main {
     private static void printSolutions(Set<Board> solutions) {
         if (solutions.size() == 0) {
             System.out.println("This input could not be solved! :(");
-        }
-
-        for (Board board : solutions) {
-            System.out.println("Solution: ");
-            board.printBoneNumbers();
+        } else {
+            System.out.println(solutions.size() == 1 ? "Result: " : "Results: ");
+            for (Board board : solutions) {
+                board.printBoneNumbers();
+                System.out.println();
+            }
         }
     }
 
@@ -80,8 +108,6 @@ public class Main {
         }
 
         for (Pair<Coordinate, Coordinate> coords : combinations.get(value)) {
-            System.out.println("***************");
-            boardToSolve.print();
             boards.addAll(getNewBoards(coords, value, boards, boardToFill, boardToSolve));
         }
 
@@ -111,8 +137,6 @@ public class Main {
 
     private static Set<Pair<Board, Board>> getNewBoards(Pair<Coordinate, Coordinate> coords, int value, Set<Pair<Board, Board>> boards, Board boardToFill, Board boardToSolve) {
         boardToSolve.removeBoneWithValue(value);
-        System.out.println("Removing bone: " + (value));
-
         Coordinate coor1 = coords.getKey();
         Coordinate coor2 = coords.getValue();
 
@@ -122,12 +146,6 @@ public class Main {
         boardToSolveCopy.clearPosition(coor1, coor2);
         Pair<Board, Board> boardPair = new Pair<>(boardToSolveCopy, boardToFillCopy);
         boards.add(boardPair);
-
-        System.out.println("Board to fill:");
-        boardToFillCopy.printBoneNumbers();
-
-        System.out.println("Board to solve:");
-        boardToSolveCopy.print();
 
         return boards;
     }

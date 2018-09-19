@@ -6,6 +6,17 @@ public class InputGenerator {
 
     }
 
+    public static int[][] getInput(int num) {
+        if (num == 1) {
+            return getInput1();
+        } else if (num == 2) {
+            return getInput2();
+        } else if (num == 3) {
+            return getInput3();
+        }
+        return new int [0][0];
+    }
+
     public static int[][] getInput1() {
         int[][] input = new int[8][7];
         input[0][0] = 4;
