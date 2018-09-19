@@ -17,6 +17,8 @@ getInput = ([5, 4, 3, 6, 5, 3, 4, 6],
             [5, 5, 3, 6, 1, 2, 3, 1],
             getBones [] 0)
 
+
+
 printSolution :: (Board, Board) -> IO ()
 printSolution boards = putStr("Solution found: \n" ++ boardToString (snd boards))
 
@@ -182,8 +184,9 @@ updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve
                                              boneNumber = fst (snd boneWithLowestOccurrence)
                                              coors = findBoneOnBoard bone boardToSolve
 
-iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
-iterateBoards [] [] = []
-iterateBoards [] boardsToFill = iterateBoards boardsToFill []
-iterateBoards boardsToProcess boardsToFill = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess))
-                                          where solved = boardIsEmpty fst (head boardsToProcess)
+iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
+iterateBoards [] [] [] = []
+iterateBoards [] [] xs = xs
+iterateBoards [] boardsToFill xs = iterateBoards boardsToFill [] xs
+iterateBoards boardsToProcess boardsToFill xs = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess)) (if solved then xs ++ [head boardsToProcess] else xs)
+                                          where solved = boardIsEmpty (fst (head boardsToProcess))
