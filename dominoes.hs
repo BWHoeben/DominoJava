@@ -7,20 +7,56 @@ type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
 type Bone = (Int, Int) -- (leftPip, rightPip)
 
-getInput :: Board -- Works
-getInput = ([5, 4, 3, 6, 5, 3, 4, 6],
-            [0, 6, 0, 1, 2, 3, 1, 1],
-            [3, 2, 6, 5, 0, 4, 2, 0],
-            [5, 3, 6, 2, 3, 2, 0, 6],
-            [4, 0, 4, 1, 0, 0, 4, 1],
-            [5, 2, 2, 4, 4, 1, 6, 5],
-            [5, 5, 3, 6, 1, 2, 3, 1],
-            getBones [] 0)
+getInput1 :: Board -- Works
+getInput1 = ([5, 4, 3, 6, 5, 3, 4, 6],
+             [0, 6, 0, 1, 2, 3, 1, 1],
+             [3, 2, 6, 5, 0, 4, 2, 0],
+             [5, 3, 6, 2, 3, 2, 0, 6],
+             [4, 0, 4, 1, 0, 0, 4, 1],
+             [5, 2, 2, 4, 4, 1, 6, 5],
+             [5, 5, 3, 6, 1, 2, 3, 1],
+             getBones [] 0)
 
+getInput2 :: Board
+getInput2 = ([4, 2, 5, 2, 6, 3, 5, 4],
+             [5, 0, 4, 3, 1, 4, 1, 1],
+             [1, 2, 3, 0, 2, 2, 2, 2],
+             [1, 4, 0, 1, 3, 5, 6, 5],
+             [4, 0, 6, 0, 3, 6, 6, 5],
+             [4, 0, 1, 6, 4, 0, 3, 0],
+             [6, 5, 3, 6, 2, 1, 5, 3],
+             getBones [] 0)
 
+getInput3 :: Board
+getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
+             [1, 3, 2, 0, 1, 0, 3, 4],
+             [1, 3, 2, 4, 6, 6, 5, 4],
+             [1, 0, 4, 3, 2, 1, 1, 2],
+             [5, 1, 3, 6, 0, 4, 5, 5],
+             [5, 5, 4, 0, 2, 6, 0, 3],
+             [6, 0, 5, 3, 4, 2, 0, 3],
+             getBones [] 0)
 
-printSolution :: (Board, Board) -> IO ()
-printSolution boards = putStr("Solution found: \n" ++ boardToString (snd boards))
+getEmptyBoard :: Board -- Works
+getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
+
+start :: IO ()
+start = do putStr("Input: \n")
+           printBoard getInput3
+           putStr("\nResult(s): \n")
+           printSolutions (iterateBoards[(getInput3, getEmptyBoard)] [] [])
+
+iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
+iterateBoards [] [] [] = []
+iterateBoards [] [] xs = xs
+iterateBoards [] boardsToFill xs = iterateBoards boardsToFill [] xs
+iterateBoards boardsToProcess boardsToFill xs = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess)) (if solved then xs ++ [head boardsToProcess] else xs)
+                                          where solved = boardIsEmpty (fst (head boardsToProcess))
+
+printSolutions :: [(Board, Board)] -> IO()
+printSolutions [] = return ()
+printSolutions xs = do putStr(boardToString (snd (head xs)) ++ "\n")
+                       printSolutions (tail xs)
 
 solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)] -- Input: boardToSolve, boardToFill, coordinates and boneNumber
 solve _ _ [] _ = []
@@ -99,9 +135,6 @@ getBones bones n = if n < 28 then getBones (bones ++ [nextBone (last bones)]) (n
 
 nextBone :: (Int, Bone) -> (Int, Bone) -- works
 nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
-
-getEmptyBoard :: Board -- Works
-getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
 
 replicateInt :: Int -> Int -> [Int] -- works
 replicateInt n x = [x | n' <- [1..n]]
@@ -183,10 +216,3 @@ updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve
                                              bone = snd (snd boneWithLowestOccurrence)
                                              boneNumber = fst (snd boneWithLowestOccurrence)
                                              coors = findBoneOnBoard bone boardToSolve
-
-iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
-iterateBoards [] [] [] = []
-iterateBoards [] [] xs = xs
-iterateBoards [] boardsToFill xs = iterateBoards boardsToFill [] xs
-iterateBoards boardsToProcess boardsToFill xs = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess)) (if solved then xs ++ [head boardsToProcess] else xs)
-                                          where solved = boardIsEmpty (fst (head boardsToProcess))
