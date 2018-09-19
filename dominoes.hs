@@ -17,39 +17,8 @@ getInput = ([5, 4, 3, 6, 5, 3, 4, 6],
             [5, 5, 3, 6, 1, 2, 3, 1],
             getBones [] 0)
 
-mainF :: Board -> ()
-mainF board = getSolution [(board, getEmptyBoard)]
-
-getSolution :: [(Board, Board)] -> ()
-getSolution boards = if (length updatedBoards > 0) then getSolution updatedBoards else ()
-                     where updatedBoards = updateBoardList boards
-
-updateBoardList :: [(Board, Board)] -> [(Board, Board)]
-updateBoardList [] = []
-updateBoardList boards = updateBoard (fst (head updatedBoards)) (snd (head updatedBoards)) ++ updateBoardList (tail updatedBoards)
-                         where updatedBoards = removeBoards boards
-
-removeBoards :: [(Board, Board)] -> [(Board, Board)]
-removeBoards [] = []
-removeBoards boards = if isSolved (head boards) then handleRemovedBoards (head boards) else boards ++ removeBoards boards 
-
-handleRemovedBoards :: (Board, Board) -> [(Board, Board)]
-handleRemovedBoards boards = do if isSolved boards then boardToString (snd boards) else []
-                                []
-
-isSolved :: (Board, Board) -> Bool
-isSolved boards = if boardIsEmpty (fst boards) then True else False
-
 printSolution :: (Board, Board) -> IO ()
 printSolution boards = putStr("Solution found: \n" ++ boardToString (snd boards))
-
-updateBoard :: Board -> Board -> [(Board, Board)] -- (boardToSolve, boardToFill)
-updateBoard boardToSolve boardToFill = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
-                                       where boneWithLowestOccurrence = getBoneWithLowestOccurrence boardToSolve
-                                             occurrences = fst boneWithLowestOccurrence
-                                             bone = snd (snd boneWithLowestOccurrence)
-                                             boneNumber = fst (snd boneWithLowestOccurrence)
-                                             coors = findBoneOnBoard bone boardToSolve
 
 solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)] -- Input: boardToSolve, boardToFill, coordinates and boneNumber
 solve _ _ [] _ = []
@@ -138,7 +107,8 @@ replicateInt n x = [x | n' <- [1..n]]
 printList :: [Int] -> String -- works
 printList [] = ""
 printList xs = e ++ " " ++ printList (tail xs)
-               where e = if (head xs) < 0 then "X" else show (head xs)
+               where e = if (head xs) < 0 then " X" else spacer ++ show (head xs)
+                     spacer = if (head xs) < 10 then " " else ""
 
 boardToString :: Board -> String -- works
 boardToString (a, b, c , d, e, f, g, xs) = printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n"
@@ -204,3 +174,16 @@ updateCellInBoardUsingCoordinates board value coors = updateCellInBoard newBoard
 emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
 emptyCellInBoardUsingCoordinates board coors = updateCellInBoardUsingCoordinates board (-1) coors
 
+updateBoard :: (Board,Board) -> [(Board, Board)] -- (boardToSolve, boardToFill)
+updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
+                                       where boneWithLowestOccurrence = getBoneWithLowestOccurrence boardToSolve
+                                             occurrences = fst boneWithLowestOccurrence
+                                             bone = snd (snd boneWithLowestOccurrence)
+                                             boneNumber = fst (snd boneWithLowestOccurrence)
+                                             coors = findBoneOnBoard bone boardToSolve
+
+iterateBoards :: [(Board, Board)] -> [(Board, Board)] -> [(Board, Board)]
+iterateBoards [] [] = []
+iterateBoards [] boardsToFill = iterateBoards boardsToFill []
+iterateBoards boardsToProcess boardsToFill = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess))
+                                          where solved = boardIsEmpty fst (head boardsToProcess)
