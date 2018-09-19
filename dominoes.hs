@@ -7,16 +7,6 @@ type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
 type Bone = (Int, Int) -- (leftPip, rightPip)
 
---getInput :: ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [Int])
---getInput = ([5, 0, 3, 5, 4, 5, 5],
---            [4, 6, 2, 3, 0, 2, 5],
---            [3, 0, 6, 6, 4, 2, 3],
---            [6, 1, 5, 2, 1, 4, 6],
---            [5, 2, 0, 3, 0, 4, 1],
---            [3, 3, 4, 2, 0, 1, 2],
---            [4, 1, 2, 0, 4, 6, 3],
---            [6, 1, 0, 6, 1, 5, 1])
-
 getInput :: Board -- Works
 getInput = ([5, 4, 3, 6, 5, 3, 4, 6],
             [0, 6, 0, 1, 2, 3, 1, 1],
@@ -63,7 +53,15 @@ updateBoard boardToSolve boardToFill = if occurrences == 0 then [] else solve bo
 
 solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)] -- Input: boardToSolve, boardToFill, coordinates and boneNumber
 solve _ _ [] _ = []
-solve boardToSolve boardToFill coors boneNumber = [(emptyCellInBoardUsingCoordinates boardToSolve (head coors), updateCellInBoardUsingCoordinates boardToFill boneNumber (head coors))] ++ solve boardToSolve boardToFill (tail coors) boneNumber
+solve boardToSolve boardToFill coors boneNumber = [(emptyCellInBoardUsingCoordinates updatedBoard (head coors), updateCellInBoardUsingCoordinates boardToFill boneNumber (head coors))] ++ solve boardToSolve boardToFill (tail coors) boneNumber
+                                                  where updatedBoard = removeBoneFromBoard boardToSolve boneNumber
+
+removeBoneFromBoard :: Board -> Int -> Board
+removeBoneFromBoard (a,b,c,d,e,f,g,xs) boneNumber = (a,b,c,d,e,f,g, removeBoneFromBones xs boneNumber)
+
+removeBoneFromBones :: [(Int, Bone)] -> Int -> [(Int, Bone)]
+removeBoneFromBones [] _ = []
+removeBoneFromBones xs boneNumber = (if fst (head xs) == boneNumber then [] else [head xs]) ++ removeBoneFromBones (tail xs) boneNumber
 
 getBoneWithLowestOccurrence :: Board -> (Int, (Int, Bone)) -- (frequency, (boneNumber, Bone))
 getBoneWithLowestOccurrence board = (!!) boneOccurrences (fst (minimumWithIndex (occurrencesToList (boneOccurrences))))
@@ -123,7 +121,7 @@ findBoneInList bone xs index = if index < (length xs - 1) then ((if (valuesInLis
 pairConsecutiveElementsInList :: [a] -> [(a,a)] -- works
 pairConsecutiveElementsInList xs = zip xs $ tail xs
 
-getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)] -- works
+getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)] -- works -- (BoneNumber, Bone)
 getBones [] n = getBones [(1, (0, 0))] 1 
 getBones bones n = if n < 28 then getBones (bones ++ [nextBone (last bones)]) (n + 1) else bones
 
