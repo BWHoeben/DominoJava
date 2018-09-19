@@ -54,7 +54,7 @@ public class Main {
 
         for (Board board : solutions) {
             System.out.println("Solution: ");
-            board.print();
+            board.printBoneNumbers();
         }
     }
 
@@ -124,7 +124,7 @@ public class Main {
         boards.add(boardPair);
 
         System.out.println("Board to fill:");
-        boardToFillCopy.print();
+        boardToFillCopy.printBoneNumbers();
 
         System.out.println("Board to solve:");
         boardToSolveCopy.print();

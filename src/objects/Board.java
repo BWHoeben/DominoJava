@@ -11,15 +11,18 @@ public class Board {
     private int width = 8;
     private int height = 7;
     private Map<Integer, Integer> bones;
+    private Map<Integer, Integer> bonesComplete;
 
     public Board(int[][] values) {
         this.values = values;
         initializeBones();
+        this.bonesComplete = new HashMap<>(this.bones);
     }
 
     public Board(int[][] values, Map<Integer, Integer> bones) {
         this.values = values;
         this.bones = bones;
+        this.bonesComplete = new HashMap<>(bones);
     }
 
     private void initializeBones() {
@@ -108,6 +111,31 @@ public class Board {
             System.out.println();
         }
     }
+
+    public void printBoneNumbers() {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (values[j][i] < 0) {
+                    System.out.print("   X");
+                } else if (valueToBoneNumber(values[j][i]) > 9) {
+                    System.out.print("  " + valueToBoneNumber(values[j][i]));
+                } else {
+                    System.out.print("   " + valueToBoneNumber(values[j][i]));
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private int valueToBoneNumber(int value) {
+        for (Integer i : bonesComplete.keySet()) {
+            if (bonesComplete.get(i).equals(value)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     public boolean isEmpty() {
         for (int i = 0; i < 8; i++) {
