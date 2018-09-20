@@ -68,6 +68,14 @@ iterateBoards [] boardsToFill xs = iterateBoards boardsToFill [] xs
 iterateBoards boardsToProcess boardsToFill xs = iterateBoards (tail boardsToProcess) (boardsToFill ++ if solved then [] else updateBoard (head boardsToProcess)) (if solved then xs ++ [head boardsToProcess] else xs)
                                           where solved = boardIsEmpty (fst (head boardsToProcess))
 
+updateBoard :: (Board,Board) -> [(Board, Board)] -- (boardToSolve, boardToFill)
+updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
+                                       where boneWithLowestOccurrence = getBoneWithLowestOccurrence boardToSolve
+                                             occurrences = fst boneWithLowestOccurrence
+                                             bone = snd (snd boneWithLowestOccurrence)
+                                             boneNumber = fst (snd boneWithLowestOccurrence)
+                                             coors = findBoneOnBoard bone boardToSolve
+
 printSolutions :: [(Board, Board)] -> IO()
 printSolutions [] = return ()
 printSolutions xs = do putStr(boardToString (snd (head xs)) ++ "\n")
@@ -106,26 +114,21 @@ calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
 
 
 findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)] -- works
-findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board ++ findBoneOnBoardVertical bone board
+findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board 0 ++ findBoneOnBoardVertical bone board 0
 
-findBoneOnBoardHorizontal :: Bone -> Board -> [(Coordinate, Coordinate)]
-findBoneOnBoardHorizontal bone board = convertRowIndicesToCoordinates (findBoneInList bone (getRow board 0) 0) 0 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 1) 0) 1 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 2) 0) 2 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 3) 0) 3 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 4) 0) 4 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 5) 0) 5 ++
-                                       convertRowIndicesToCoordinates (findBoneInList bone (getRow board 6) 0) 6
+findBoneOnBoardHorizontal :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
+findBoneOnBoardHorizontal bone board 7 = [] 
+findBoneOnBoardHorizontal bone board x = findBoneInRow bone board x ++ findBoneOnBoardHorizontal bone board (x + 1)
 
-findBoneOnBoardVertical :: Bone -> Board -> [(Coordinate, Coordinate)]
-findBoneOnBoardVertical bone board = convertColIndicesToCoordinates (findBoneInList bone (getColumn board 0) 0) 0 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 1) 0) 1 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 2) 0) 2 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 3) 0) 3 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 4) 0) 4 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 5) 0) 5 ++
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 6) 0) 6 ++ 
-                                     convertColIndicesToCoordinates (findBoneInList bone (getColumn board 7) 0) 7
+findBoneOnBoardVertical :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
+findBoneOnBoardVertical bone board 8 = []
+findBoneOnBoardVertical bone board x = findBoneInCol bone board x ++ findBoneOnBoardVertical bone board (x + 1)
+
+findBoneInRow :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
+findBoneInRow bone board x = convertRowIndicesToCoordinates (findBoneInList bone (getRow board x) 0) x
+
+findBoneInCol :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
+findBoneInCol bone board x = convertColIndicesToCoordinates (findBoneInList bone (getColumn board x) 0) x
 
 convertRowIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
 convertRowIndicesToCoordinates [] c = []
@@ -188,13 +191,9 @@ getRow (a, b, c , d, e, f, g, xs) row
    | otherwise = error "Wrong input for getRow function"
 
 getColumn :: Board -> Int -> [Int] -- works
-getColumn board n = [getRow board 0 !! n] ++
-                    [getRow board 1 !! n] ++
-                    [getRow board 2 !! n] ++
-                    [getRow board 3 !! n] ++
-                    [getRow board 4 !! n] ++
-                    [getRow board 5 !! n] ++
-                    [getRow board 6 !! n]
+getColumn board n = getColumn' board n 0
+                     where getColumn' _ _ 7 = []
+                           getColumn' board n x = [getRow board x !! n] ++ getColumn' board n (x + 1)
    
 emptyCellInBoard :: Board -> Int -> Int -> Board -- works
 emptyCellInBoard board row col = replaceRowInBoard board row (emptyCellInRow (getRow board row) col)
@@ -225,11 +224,3 @@ updateCellInBoardUsingCoordinates board value coors = updateCellInBoard newBoard
 
 emptyCellInBoardUsingCoordinates :: Board -> (Coordinate, Coordinate) -> Board
 emptyCellInBoardUsingCoordinates board coors = updateCellInBoardUsingCoordinates board (-1) coors
-
-updateBoard :: (Board,Board) -> [(Board, Board)] -- (boardToSolve, boardToFill)
-updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve boardToSolve boardToFill coors boneNumber
-                                       where boneWithLowestOccurrence = getBoneWithLowestOccurrence boardToSolve
-                                             occurrences = fst boneWithLowestOccurrence
-                                             bone = snd (snd boneWithLowestOccurrence)
-                                             boneNumber = fst (snd boneWithLowestOccurrence)
-                                             coors = findBoneOnBoard bone boardToSolve

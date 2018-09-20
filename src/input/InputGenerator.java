@@ -2,7 +2,7 @@ package input;
 
 public class InputGenerator {
 
-    public InputGenerator() {
+    private InputGenerator() {
 
     }
 

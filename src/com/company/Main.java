@@ -75,7 +75,7 @@ public class Main {
     }
 
     private static void printSolutions(Set<Board> solutions) {
-        if (solutions.size() == 0) {
+        if (solutions.isEmpty()) {
             System.out.println("This input could not be solved! :(");
         } else {
             System.out.println(solutions.size() == 1 ? "Result: " : "Results: ");
@@ -98,9 +98,8 @@ public class Main {
                 return new HashSet<>();
             } else if (combinations.get(bone).size() == 1) {
                 Set<Pair<Coordinate, Coordinate>> set = combinations.get(bone);
-                for (Pair<Coordinate, Coordinate> pair : set) {
-                    return getNewBoards(pair, bone, boards, boardToFill, boardToSolve);
-                }
+                Iterator<Pair<Coordinate, Coordinate>> iterator = set.iterator();
+                return getNewBoards(iterator.next(), bone, boards, boardToFill, boardToSolve);
             } else if (combinations.get(bone).size() < lowestNumberOfOccurrences) {
                 lowestNumberOfOccurrences = combinations.get(bone).size();
                 value = bone;
