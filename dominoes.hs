@@ -7,13 +7,7 @@ type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
 type Bone = (Int, Int) -- (leftPip, rightPip)
 
-height :: Int
-height = 7
-
-width :: Int
-width = 8
-
-getInput1 :: Board -- Works
+getInput1 :: Board
 getInput1 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [0, 6, 0, 1, 2, 3, 1, 1],
              [3, 2, 6, 5, 0, 4, 2, 0],
@@ -43,9 +37,9 @@ getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
              [6, 0, 5, 3, 4, 2, 0, 3],
              initBones)
 
-getEmptyBoard :: Board -- Works
+getEmptyBoard :: Board
 getEmptyBoard = (emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, initBones)
-                where emptyRow = replicateInt width (-1)
+                where emptyRow = replicate 8 (-1)
 main :: IO ()
 main = do putStrLn "Select an input (1, 2 or 3):"
           answer <- getLine
@@ -76,15 +70,15 @@ updateBoard (boardToSolve, boardToFill) = if occurrences == 0 then [] else solve
                                              boneNumber = fst (snd boneWithLowestOccurrence)
                                              coors = findBoneOnBoard bone boardToSolve
 
-printSolutions :: [(Board, Board)] -> IO()
-printSolutions [] = return ()
-printSolutions xs = do putStr(boardToString (snd (head xs)) ++ "\n")
-                       printSolutions (tail xs)
-
 solve :: Board -> Board -> [(Coordinate, Coordinate)] -> Int -> [(Board, Board)] -- Input: boardToSolve, boardToFill, coordinates and boneNumber
 solve _ _ [] _ = []
 solve boardToSolve boardToFill coors boneNumber = [(emptyCellInBoardUsingCoordinates updatedBoard (head coors), updateCellInBoardUsingCoordinates boardToFill boneNumber (head coors))] ++ solve boardToSolve boardToFill (tail coors) boneNumber
                                                   where updatedBoard = removeBoneFromBoard boardToSolve boneNumber
+
+printSolutions :: [(Board, Board)] -> IO()
+printSolutions [] = return ()
+printSolutions xs = do putStr(boardToString (snd (head xs)) ++ "\n")
+                       printSolutions (tail xs)
 
 removeBoneFromBoard :: Board -> Int -> Board
 removeBoneFromBoard (a,b,c,d,e,f,g,xs) boneNumber = (a,b,c,d,e,f,g, removeBoneFromBones xs boneNumber)
@@ -96,24 +90,18 @@ removeBoneFromBones xs boneNumber = (if fst (head xs) == boneNumber then [] else
 getBoneWithLowestOccurrence :: Board -> (Int, (Int, Bone)) -- (frequency, (boneNumber, Bone))
 getBoneWithLowestOccurrence board = (!!) boneOccurrences (fst (minimumWithIndex (occurrencesToList (boneOccurrences))))
                                           where boneOccurrences = calculateBoneOccurrences board
-
-minimumWithIndex :: [Int] -> (Int, Int) -- (index, value)
-minimumWithIndex xs = (fromJust (elemIndex min xs), min)
-                       where min = minimum xs 
+                                                minimumWithIndex xs = (fromJust (elemIndex (minimum xs) xs), minimum xs)
 
 occurrencesToList :: [(Int, (Int, Bone))] -> [Int]
 occurrencesToList [] = []
 occurrencesToList xs = [fst (head xs)] ++ occurrencesToList (tail xs)  
 
-calculateBoneOccurrences :: Board -> [(Int, (Int, Bone))] -- works -- [(frequency, (boneNumber, Bone))]
+calculateBoneOccurrences :: Board -> [(Int, (Int, Bone))] -- [(frequency, (boneNumber, Bone))]
 calculateBoneOccurrences (a, b, c, d, e, f, g, []) = []
 calculateBoneOccurrences (a, b, c, d, e, f, g, xs) = [(calculateBoneOccurrence (a, b, c, d, e, f, g, xs) (snd (head xs)) , (head xs))] ++ calculateBoneOccurrences (a, b, c, d, e, f, g, tail xs)
+                                                     where calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
 
-calculateBoneOccurrence :: Board -> Bone -> Int -- works
-calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
-
-
-findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)] -- works
+findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)]
 findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board ++ findBoneOnBoardVertical bone board
 
 findBoneOnBoardHorizontal :: Bone -> Board -> [(Coordinate, Coordinate)]
@@ -127,10 +115,10 @@ findBoneOnBoardVertical bone board = findBoneOnBoardVertical' bone board 0
                                             findBoneOnBoardVertical' bone board x = findBoneInCol bone board x ++ findBoneOnBoardVertical' bone board (x + 1)
 
 findBoneInRow :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
-findBoneInRow bone board x = convertRowIndicesToCoordinates (findBoneInList bone (getRow board x) 0) x
+findBoneInRow bone board x = convertRowIndicesToCoordinates (findBoneInList bone (getRow board x)) x
 
 findBoneInCol :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
-findBoneInCol bone board x = convertColIndicesToCoordinates (findBoneInList bone (getColumn board x) 0) x
+findBoneInCol bone board x = convertColIndicesToCoordinates (findBoneInList bone (getColumn board x)) x
 
 convertRowIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinate)]
 convertRowIndicesToCoordinates [] c = []
@@ -141,47 +129,45 @@ convertColIndicesToCoordinates :: [(Int, Int)] -> Int -> [(Coordinate, Coordinat
 convertColIndicesToCoordinates [] c = []
 convertColIndicesToCoordinates xs r = [((r, fst (head xs)),(r, snd (head xs)))] ++ convertColIndicesToCoordinates (tail xs) r
 
-findBoneInList :: Bone -> [Int] -> Int -> [(Int, Int)]
-findBoneInList bone xs index = if index < (length xs - 1) then ((if (valuesInList == bone || valuesInList == swap bone) then [(index, index + 1)] else []) ++ findBoneInList bone xs (index + 1)) else [] 
+findBoneInList :: Bone -> [Int] -> [(Int, Int)]
+findBoneInList bone xs = findBoneInList' bone xs 0
+                         where findBoneInList' bone xs index = if index < (length xs - 1) then ((if (valuesInList == bone || valuesInList == swap bone) then [(index, index + 1)] else []) ++ findBoneInList' bone xs (index + 1)) else [] 
                                                                      where valuesInList = (xs !! index, xs !! (index + 1))
 
-pairConsecutiveElementsInList :: [a] -> [(a,a)] -- works
+pairConsecutiveElementsInList :: [a] -> [(a,a)]
 pairConsecutiveElementsInList xs = zip xs $ tail xs
 
-getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)] -- works -- (BoneNumber, Bone)
+getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)] -- (BoneNumber, Bone)
 getBones [] n = getBones [(1, (0, 0))] 1 
 getBones bones n = if n < 28 then getBones (bones ++ [nextBone (last bones)]) (n + 1) else bones
 
-nextBone :: (Int, Bone) -> (Int, Bone) -- works
+nextBone :: (Int, Bone) -> (Int, Bone)
 nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
 
 initBones :: [(Int, Bone)]
 initBones = getBones [] 0
 
-replicateInt :: Int -> Int -> [Int] -- works
-replicateInt n x = [x | n' <- [1..n]]
-
-printList :: [Int] -> String -- works
+printList :: [Int] -> String
 printList [] = ""
 printList xs = e ++ " " ++ printList (tail xs)
                where e = if (head xs) < 0 then " X" else spacer ++ show (head xs)
                      spacer = if (head xs) < 10 then " " else ""
 
-boardToString :: Board -> String -- works
+boardToString :: Board -> String
 boardToString (a, b, c , d, e, f, g, xs) = printList a ++ "\n" ++ printList b ++ "\n" ++ printList c ++ "\n" ++ printList d ++ "\n" ++ printList e ++ "\n" ++ printList f ++ "\n" ++ printList g ++ "\n"
 
-printBoard :: Board -> IO () -- works
+printBoard :: Board -> IO ()
 printBoard board = putStr(boardToString board) 
 
-boardIsEmpty :: Board -> Bool -- works
+boardIsEmpty :: Board -> Bool
 boardIsEmpty (a, b, c , d, e, f, g, xs) = rowIsEmpty a && rowIsEmpty b && rowIsEmpty c && rowIsEmpty d && rowIsEmpty e && rowIsEmpty f && rowIsEmpty g
 
 -- For empty cells a value of -1 is used
-rowIsEmpty :: [Int] -> Bool -- works
+rowIsEmpty :: [Int] -> Bool
 rowIsEmpty [] = True
 rowIsEmpty xs = if (head xs >= 0) then False else rowIsEmpty (tail xs)
 
-getRow :: Board -> Int -> [Int] -- works
+getRow :: Board -> Int -> [Int]
 getRow (a, b, c , d, e, f, g, xs) row
    | row == 0 = a
    | row == 1 = b
@@ -192,15 +178,15 @@ getRow (a, b, c , d, e, f, g, xs) row
    | row == 6 = g
    | otherwise = error "Wrong input for getRow function"
 
-getColumn :: Board -> Int -> [Int] -- works
+getColumn :: Board -> Int -> [Int]
 getColumn board n = getColumn' board n 0
                      where getColumn' _ _ 7 = []
                            getColumn' board n x = [getRow board x !! n] ++ getColumn' board n (x + 1)
    
-emptyCellInBoard :: Board -> Int -> Int -> Board -- works
+emptyCellInBoard :: Board -> Int -> Int -> Board
 emptyCellInBoard board row col = replaceRowInBoard board row (emptyCellInRow (getRow board row) col)
 
-replaceRowInBoard :: Board -> Int -> [Int] -> Board -- works
+replaceRowInBoard :: Board -> Int -> [Int] -> Board
 replaceRowInBoard (a,b,c,d,e,f,g,xs) rowNumber newRow
    | rowNumber == 0 = (newRow, b, c, d, e, f, g, xs)
    | rowNumber == 1 = (a, newRow, c, d, e, f, g, xs)
@@ -211,16 +197,16 @@ replaceRowInBoard (a,b,c,d,e,f,g,xs) rowNumber newRow
    | rowNumber == 6 = (a, b, c, d, e, f, newRow, xs)
    | otherwise = error "Wrong input for replaceRowInBoard function"
 
-emptyCellInRow :: [Int] -> Int -> [Int] -- works
+emptyCellInRow :: [Int] -> Int -> [Int]
 emptyCellInRow col index = updateCellInRow col (-1) index
 
-updateCellInRow :: [Int] -> Int -> Int -> [Int] -- works
+updateCellInRow :: [Int] -> Int -> Int -> [Int]
 updateCellInRow col value index = take index col ++ [value] ++ drop (index + 1) col
 
-updateCellInBoard :: Board -> Int -> Int -> Int -> Board -- works
+updateCellInBoard :: Board -> Int -> Int -> Int -> Board
 updateCellInBoard board value row col = replaceRowInBoard board row (updateCellInRow (getRow board row) value col)
 
-updateCellInBoardUsingCoordinates :: Board -> Int -> (Coordinate, Coordinate) -> Board -- works
+updateCellInBoardUsingCoordinates :: Board -> Int -> (Coordinate, Coordinate) -> Board
 updateCellInBoardUsingCoordinates board value coors = updateCellInBoard newBoard value (snd (snd coors)) (fst (snd coors))
                                                          where newBoard = updateCellInBoard board value (snd (fst coors)) (fst (fst coors))
 
