@@ -114,15 +114,17 @@ calculateBoneOccurrence board bone = length (findBoneOnBoard bone board)
 
 
 findBoneOnBoard :: Bone -> Board -> [(Coordinate, Coordinate)] -- works
-findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board 0 ++ findBoneOnBoardVertical bone board 0
+findBoneOnBoard bone board = findBoneOnBoardHorizontal bone board ++ findBoneOnBoardVertical bone board
 
-findBoneOnBoardHorizontal :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
-findBoneOnBoardHorizontal bone board 7 = [] 
-findBoneOnBoardHorizontal bone board x = findBoneInRow bone board x ++ findBoneOnBoardHorizontal bone board (x + 1)
+findBoneOnBoardHorizontal :: Bone -> Board -> [(Coordinate, Coordinate)]
+findBoneOnBoardHorizontal bone board = findBoneOnBoardHorizontal' bone board 0
+                                        where findBoneOnBoardHorizontal' _ _ 7 = []
+                                              findBoneOnBoardHorizontal' bone board x = findBoneInRow bone board x ++ findBoneOnBoardHorizontal' bone board (x + 1)
 
-findBoneOnBoardVertical :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
-findBoneOnBoardVertical bone board 8 = []
-findBoneOnBoardVertical bone board x = findBoneInCol bone board x ++ findBoneOnBoardVertical bone board (x + 1)
+findBoneOnBoardVertical :: Bone -> Board -> [(Coordinate, Coordinate)]
+findBoneOnBoardVertical bone board = findBoneOnBoardVertical' bone board 0
+                                      where findBoneOnBoardVertical' _ _ 8 = []
+                                            findBoneOnBoardVertical' bone board x = findBoneInCol bone board x ++ findBoneOnBoardVertical' bone board (x + 1)
 
 findBoneInRow :: Bone -> Board -> Int -> [(Coordinate, Coordinate)]
 findBoneInRow bone board x = convertRowIndicesToCoordinates (findBoneInList bone (getRow board x) 0) x
