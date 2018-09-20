@@ -123,10 +123,8 @@ public class Main {
     private static int[][] cloneValues(int[][] original) {
         int[][] clone = new int[8][7];
         for (int i = 0; i < original.length; i++) {
-            {
-                for (int j = 0; j < original[i].length; j++)
-                    clone[i][j] = original[i][j];
-            }
+            for (int j = 0; j < original[i].length; j++)
+                clone[i][j] = original[i][j];
         }
         return clone;
     }

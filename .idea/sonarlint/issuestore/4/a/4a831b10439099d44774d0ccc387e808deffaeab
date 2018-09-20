@@ -1,24 +1,31 @@
 
-Qsquid:S2440".Remove this instantiation of "InputGenerator".(ˆÿ×¼üÿÿÿÿ8ù—Ÿ»İ,
-Xsquid:S2209"5Change this instance-reference to a static reference.(ˆÿ×¼üÿÿÿÿ8ù—Ÿ»İ,
-Xsquid:S2864£"4Iterate over the "entrySet" instead of the "keySet".(´â±úÿÿÿÿ8Àì‡Áİ,
-W
-squid:S106"9Replace this use of System.out or System.err by a logger.(è…ù×8»ã³Âİ,
-[
-squid:S1068"9Replace this use of System.out or System.err by a logger.(şÏÌÇüÿÿÿÿ8­‘¹ºİ,
-Xsquid:S2864"4Iterate over the "entrySet" instead of the "keySet".(Œºî­úÿÿÿÿ8º€ú¿İ,
+squid:S2234£"jParameters to getPossibleBonePositions have the same names but not the same order as the method arguments.(…¥¹ºùÿÿÿÿ8û‘ÇÂİ,
 V
-squid:S1064"9Replace this use of System.out or System.err by a logger.(÷¯»ÿ8Ãéµºİ,
+squid:S106 "9Replace this use of System.out or System.err by a logger.(¡™Ä±8Œ™İ‘ß,
 [
-squid:S106r"9Replace this use of System.out or System.err by a logger.(æï­¦úÿÿÿÿ8é¹½Ãİ,
+squid:S106"9Replace this use of System.out or System.err by a logger.(…‰Ì–úÿÿÿÿ8˜¹‰’ß,
+Xsquid:S2864"4Iterate over the "entrySet" instead of the "keySet".(Œºî­úÿÿÿÿ8º€ú¿İ,
+Xsquid:S2864³"4Iterate over the "entrySet" instead of the "keySet".(´â±úÿÿÿÿ8Àì‡Áİ,
+Ysquid:S1751f"6Remove this "return" statement or make it conditional.(Çúåûÿÿÿÿ8ğ¸“ºİ,
 [
-squid:S106-"9Replace this use of System.out or System.err by a logger.(Ÿ‹ôŞúÿÿÿÿ8²í‘¿İ,
-Ysquid:S1751J"6Remove this "return" statement or make it conditional.(Çúåûÿÿÿÿ8ğ¸“ºİ,
+squid:S106"9Replace this use of System.out or System.err by a logger.(ÂºŸ‘şÿÿÿÿ8Á«†’ß,
+[
+squid:S106'"9Replace this use of System.out or System.err by a logger.(¨¹°°üÿÿÿÿ8˜™ø‘ß,
 V
-squid:S106S"9Replace this use of System.out or System.err by a logger.(ˆèÑÑ8ê®Ãİ,
+squid:S106O"9Replace this use of System.out or System.err by a logger.(÷¯»ÿ8Ãéµºİ,
+[
+squid:S106T"9Replace this use of System.out or System.err by a logger.(ªÓ¼áşÿÿÿÿ8½«Õß,
 V
-squid:S106~"9Replace this use of System.out or System.err by a logger.(ú¡¼†8•è²Âİ,
-squid:S2234“"jParameters to getPossibleBonePositions have the same names but not the same order as the method arguments.(…¥¹ºùÿÿÿÿ8û‘ÇÂİ,
-Psquid:S1199d"-Extract this nested code block into a method.(ÒÌâ–øÿÿÿÿ8·×•²Ş,
-\squid:S11553">Use isEmpty() to check whether the collection is empty or not.(©›‚ú8Ãéµºİ,
-Rsquid:S2864D"4Iterate over the "entrySet" instead of the "keySet".(‰şÑÛ8Şà³¹İ,
+squid:S106Q"9Replace this use of System.out or System.err by a logger.(«ËË8ğ™Ôß,
+V
+squid:S106"9Replace this use of System.out or System.err by a logger.(ãèşş8¥å‰’ß,
+\squid:S1155N">Use isEmpty() to check whether the collection is empty or not.(©›‚ú8Ãéµºİ,
+Rsquid:S2864`"4Iterate over the "entrySet" instead of the "keySet".(‰şÑÛ8Şà³¹İ,
+V
+squid:S106"9Replace this use of System.out or System.err by a logger.(ãèşş8¥å‰’ß,
+[
+squid:S106"9Replace this use of System.out or System.err by a logger.(×„„¹øÿÿÿÿ8—İİß,
+[
+squid:S106$"9Replace this use of System.out or System.err by a logger.(¨¹°°üÿÿÿÿ8­¯ú‘ß,
+[
+squid:S106"9Replace this use of System.out or System.err by a logger.(ªÓ¼áşÿÿÿÿ8ÓÊŞß,

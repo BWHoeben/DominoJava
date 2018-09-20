@@ -7,6 +7,12 @@ type Board = ([Int], [Int], [Int], [Int], [Int], [Int], [Int], [(Int, Bone)])
 type Coordinate = (Int, Int) -- (x, y)
 type Bone = (Int, Int) -- (leftPip, rightPip)
 
+height :: Int
+height = 7
+
+width :: Int
+width = 8
+
 getInput1 :: Board -- Works
 getInput1 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [0, 6, 0, 1, 2, 3, 1, 1],
@@ -15,7 +21,7 @@ getInput1 = ([5, 4, 3, 6, 5, 3, 4, 6],
              [4, 0, 4, 1, 0, 0, 4, 1],
              [5, 2, 2, 4, 4, 1, 6, 5],
              [5, 5, 3, 6, 1, 2, 3, 1],
-             getBones [] 0)
+             initBones)
 
 getInput2 :: Board
 getInput2 = ([4, 2, 5, 2, 6, 3, 5, 4],
@@ -25,7 +31,7 @@ getInput2 = ([4, 2, 5, 2, 6, 3, 5, 4],
              [4, 0, 6, 0, 3, 6, 6, 5],
              [4, 0, 1, 6, 4, 0, 3, 0],
              [6, 5, 3, 6, 2, 1, 5, 3],
-             getBones [] 0)
+             initBones)
 
 getInput3 :: Board
 getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
@@ -35,11 +41,11 @@ getInput3 = ([6, 6, 2, 6, 5, 2, 4, 1],
              [5, 1, 3, 6, 0, 4, 5, 5],
              [5, 5, 4, 0, 2, 6, 0, 3],
              [6, 0, 5, 3, 4, 2, 0, 3],
-             getBones [] 0)
+             initBones)
 
 getEmptyBoard :: Board -- Works
-getEmptyBoard = (replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), replicateInt 8 (-1), getBones[] 0)
-
+getEmptyBoard = (emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, emptyRow, initBones)
+                where emptyRow = replicateInt width (-1)
 main :: IO ()
 main = do putStrLn "Select an input (1, 2 or 3):"
           answer <- getLine
@@ -141,9 +147,11 @@ getBones :: [(Int, Bone)] -> Int -> [(Int, Bone)] -- works -- (BoneNumber, Bone)
 getBones [] n = getBones [(1, (0, 0))] 1 
 getBones bones n = if n < 28 then getBones (bones ++ [nextBone (last bones)]) (n + 1) else bones
 
-
 nextBone :: (Int, Bone) -> (Int, Bone) -- works
 nextBone (n ,(l, r)) = if (r < 6) then (n + 1, (l, r + 1)) else (n + 1, (l + 1, l + 1))
+
+initBones :: [(Int, Bone)]
+initBones = getBones [] 0
 
 replicateInt :: Int -> Int -> [Int] -- works
 replicateInt n x = [x | n' <- [1..n]]
